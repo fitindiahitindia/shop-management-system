@@ -28,25 +28,24 @@ export class AdminAuthComponent {
     password:''
   }
   adminLogin(loginForm:AdminLogin) {
+    this.isLogin = true;
     this.loginObj.shopId = loginForm.shopId;
     // this.loginObj.password = btoa(loginForm.password+`_${Date.now()}`);
     this.loginObj.password = loginForm.password;
     this._product.login_admin(this.loginObj).subscribe(
-      (res: any) => {
+     async (res: any) => {
         if (res.status == 'success') {
           this._product.setAdminLoginToken(res.data);
           this.errorStatus = '';
-          this.isLogin = true;
           this._product.isAdminLoggedIn.next(true);
           this.registerObjectEmpty();
+         
 
-          setTimeout(() => {
-            this.isLogin = false;
-            const isCheckout=localStorage.getItem("adminlogintoken");
+            const isCheckout=await localStorage.getItem("adminlogintoken");
             if(isCheckout){
             this._router.navigate(['/', 'admin-dashboard']);
             }
-          }, 2000);
+             this.isLogin = false;
         } else {
           this.errorStatus = res.message;
         }

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ThemePalette } from '@angular/material/core';
 import { DashboardService } from 'src/app/services/dashboard.service';
 import { ProductService } from 'src/app/services/product.service';
 
@@ -22,6 +23,8 @@ export class AddComponent {
 //  saveCreateCourse(){
 //   this.service.createCourse(this.createCourseObj);
 //  }
+color:ThemePalette="accent"
+isFullPageLoad:boolean=false
 isCreatePro:boolean=false;
 getAllProduct:any=[];
 dataFilter:any;
@@ -36,16 +39,15 @@ createPro={
   productCategory:''
  
 }
-isCreateProductDisabled:boolean=false
 
 getCategoryHtm(val:any){
   this.createPro.productCategory=val.value;
 }
 createProduct():void{
-  this.isCreateProductDisabled=true;
+  this.isFullPageLoad=true
   this._product.createProduct(this.createPro).subscribe((res:any)=>{
-    this.isCreateProductDisabled=false;
     if(res.data){
+    this.isFullPageLoad=false
     this.isCreatePro=true;
     setTimeout(() => {
       this.isCreatePro = false;

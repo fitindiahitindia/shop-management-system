@@ -6,7 +6,11 @@
           Product Edit
         </div>
         <div class="card-body py-1">
-          <form action="" class="" #editProductVal="ngForm" (ngSubmit)="editProduct(editProductVal.value)">
+          <div class="loader-wrapper" *ngIf="isFullPageLoad">
+            <mat-spinner class="small-spinner"></mat-spinner>
+          </div>
+          <form action="" *ngIf="!isFullPageLoad" class="" #editProductVal="ngForm"
+            (ngSubmit)="editProduct(editProductVal.value)">
             <div class="row py-2  border bg-light">
               <div class="col-6">
                 <label class="form-label">Name</label>
@@ -59,4 +63,13 @@
     </div>
   </div>
 
+</div>
+
+
+<!-- loader -->
+<div class="d-flex align-items-center justify-content-center"
+  style="width: 100%; height: 100%;position:fixed;top:0;left:0;z-index:99999;background-color: #0000005e;"
+  *ngIf="apiLoader">
+
+  <mat-spinner style="opacity: 1;" [color]="color" [diameter]="50"></mat-spinner>
 </div>

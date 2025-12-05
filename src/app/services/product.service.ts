@@ -25,9 +25,10 @@ export class ProductService {
   // URL = "http://192.168.247.77:5000/api/v1";
   // URL = "http://192.168.29.108:5000/api/v1";
   // URL = "http://192.168.1.9:2020/api/v1";
-     URL = "http://localhost:2020/api/v1";
+    //  URL = "http://localhost:2020/api/v1";
   // URL="https://ecommerce-api-topaz.vercel.app/api/v1"
   // URL="https://ecommerce-api-weld.vercel.app/api/v1"
+     URL="https://shop-management-system-api.vercel.app/api/v1"
   
   getCustomer(){
    const adminlogintoken=this.getAdminLoginToken();

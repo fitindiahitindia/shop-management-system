@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { ThemePalette } from '@angular/material/core';
 import { ProductService } from 'src/app/services/product.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 
@@ -10,6 +11,9 @@ import { SnackbarService } from 'src/app/services/snackbar.service';
 })
 export class CategoryComponent {
   constructor(private _product: ProductService,private _snackbar: SnackbarService){}
+  isFullPageLoad:boolean=true;
+  apiLoader:boolean=false;
+  color:ThemePalette="accent"
   productCategory:any[] = []
   message=""
   isUpdate:boolean = false;
@@ -25,9 +29,10 @@ export class CategoryComponent {
     category.resetForm()
   }
   createCategory(category:any){
+    this.apiLoader=true;
     this._product.create_Category(category).subscribe((res:any)=>{
       this._snackbar.openSnackBar("Add category successfully", "X");
-    
+      this.apiLoader=false;
       this.categoryObj.categoryName=""
       this.getCategory()
       setTimeout(() => {
@@ -37,25 +42,35 @@ export class CategoryComponent {
       })
   }
   getCategory(){
+    this.isFullPageLoad=true;
     this._product.get_Categroy().subscribe((res:any)=>{
       this.productCategory = res.data
+      this.isFullPageLoad=false
+    },(error)=>{
+     this.uploadError = error.error
     })
   } 
   updateCategory(){
+    this.apiLoader=true;
    this._product.edit_Category(this.editId,this.categoryObj).subscribe((res:any)=>{
     this._snackbar.openSnackBar("Update category successfully", "X");
+    this.apiLoader=false;
     this.isUpdate = false;
     this.categoryObj.categoryName = null;
     this.getCategory()
   })}
 
   remove(id:string){
+    this.apiLoader=true;
     const confirm=window.confirm("Are you sure delete this category")
     if(confirm){
     this._product.remove_Category(id).subscribe((res:any)=>{
       this._snackbar.openSnackBar("Delete category successfully", "X");
+      this.apiLoader=false;
       this.getCategory()
-    })}
+    })}else{
+      this.apiLoader=false;
+    }
   }
 
   edit(item:any){

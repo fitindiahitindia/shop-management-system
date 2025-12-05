@@ -11,6 +11,7 @@ export class ViewSingleComponent {
   constructor(private _product:ProductService,private _activatedRoute:ActivatedRoute){
 
   }
+isFullPageLoad:boolean=true;
 isCreatePro:boolean=false;
 getAllProduct:any=[];
 dataFilter:any;
@@ -33,7 +34,11 @@ getProductType(){
    this.viewPro.productQuantity=res.data.productQuantity;
    this.viewPro.productPurchasingDate=res.data.productPurchasingDate;
    this.viewPro.productCategory=res.data.productCategory;
+   this.isFullPageLoad=false;
+  },(error)=>{
+    alert(error.message)
   })
+  
 }
 
 ngOnInit(){

@@ -1,4 +1,5 @@
 import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { ThemePalette } from '@angular/material/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ProductService } from 'src/app/services/product.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
@@ -15,6 +16,9 @@ export class AddManageOrdersComponent {
     private _snackBar: MatSnackBar,
     private _snackbar: SnackbarService
   ) {}
+  color:ThemePalette = "accent"
+  apiLoader:boolean=false
+  isFullPageLoad:boolean=true;
   isCreateOrd: boolean = false;
   getAllProduct: any = [];
   dataFilter: any;
@@ -47,6 +51,7 @@ export class AddManageOrdersComponent {
   }
   
   addCart(form: any) {
+    
     this.isError = '';
 
     if (form.invalid) {
@@ -78,6 +83,7 @@ export class AddManageOrdersComponent {
   }
 
   createOrder() {
+    this.apiLoader=true
     this.isCreateOrderLoader = true;
     if (this.multiProducts.length != 0) {
       const orderData = {
@@ -93,6 +99,7 @@ export class AddManageOrdersComponent {
             this.getProduct();
             this.isCreateOrd = true;
             this.isCreateOrderLoader = false;
+            this.apiLoader=false
             setTimeout(() => {
               this.isCreateOrd = false;
             }, 3000);
@@ -101,10 +108,11 @@ export class AddManageOrdersComponent {
         (error) => {
           this.isError = error.error.message;
           this.isCreateOrderLoader = false;
+          this.apiLoader=false
         }
       );
     } else {
-      alert('Add at least one product to create order');
+      this._snackbar.openSnackBar('Add at least one product to create order', 'X');
       this.isCreateOrderLoader = false;
     }
   }
@@ -123,24 +131,13 @@ export class AddManageOrdersComponent {
   getProduct() {
     this._product.get_product().subscribe((res: any) => {
       this.products = res.data;
+      this.isFullPageLoad=false;
+    },(error)=>{
+      this._snackbar.openSnackBar(error.message, 'X');
+      this.isFullPageLoad=false;
     });
   }
-  validationPri() {
-    if (
-      this.createPro.productSellingPrice == 0 ||
-      this.createPro.productSellingPrice == null ||
-      this.createPro.productSellingPrice == ''
-    ) {
-      alert('Product Selling Price Should not be 0');
-      this.createPro.productSellingPrice = null;
-    }
-  }
-  validationQuan() {
-    if (this.createPro.productQuantity == 0) {
-      alert('Product Quantity Should not be 0');
-      this.createPro.productQuantity = null;
-    }
-  }
+  
   grandTotal() {
     return this.multiProducts.reduce(
       (acc, item) => acc + item.productSellingPrice * item.productQuantity,
@@ -154,6 +151,8 @@ export class AddManageOrdersComponent {
       this.options = res.data.map((customer:any)=>{
         return customer.mobileNo ? `${customer.customerName} - ${customer.mobileNo}` : customer.customerName;
       })
+    },(error)=>{
+      this._snackbar.openSnackBar(error.message, 'X');
     })
   }
 

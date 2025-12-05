@@ -1,0 +1,11 @@
+.loader-wrapper {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  height: 80px; /* optional: थोड़ा space देंगे */
+}
+
+.small-spinner {
+  width: 30px !important;
+  height: 30px !important;
+}
