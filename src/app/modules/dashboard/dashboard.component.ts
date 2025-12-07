@@ -19,18 +19,6 @@ export class DashboardComponent {
     "July","August","September","October","November","December"
   ];
   constructor(private _product:ProductService){
-    this._product.getAdminDashAnalsis().subscribe((res: any) => {
-      this.monthNumbersOrders = this.months.map(
-        month => res.data?.orderResult?.[this.year]?.[month] ?? 0
-      );
-      this.monthNumbersProduct = this.months.map(
-        month => res.data?.productResult?.[this.year]?.[month] ?? 0
-      );
-      this.totalOrders = this.monthNumbersOrders.reduce((acc, curr) => acc + curr, 0);
-      this.totalProducts = this.monthNumbersProduct.reduce((acc, curr) => acc + curr, 0);
-
-      this.createCharts();
-    });
   }
    
   createCharts() {
@@ -70,5 +58,18 @@ export class DashboardComponent {
 }
 
   
-   ngOnInit(){}
+   ngOnInit(){
+     this._product.getAdminDashAnalsis().subscribe((res: any) => {
+      this.monthNumbersOrders = this.months.map(
+        month => res.data?.orderResult?.[this.year]?.[month] ?? 0
+      );
+      this.monthNumbersProduct = this.months.map(
+        month => res.data?.productResult?.[this.year]?.[month] ?? 0
+      );
+      this.totalOrders = this.monthNumbersOrders.reduce((acc, curr) => acc + curr, 0);
+      this.totalProducts = this.monthNumbersProduct.reduce((acc, curr) => acc + curr, 0);
+
+      this.createCharts();
+    });
+   }
 }

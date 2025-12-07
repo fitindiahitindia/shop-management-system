@@ -43,15 +43,15 @@ export class ViewComponent {
     let removeConfirm=confirm("Are you sure delete product");
     if(removeConfirm==true){
     this.isLoader=true;
-    this._product.removeSingleProduct(id).subscribe((res:any)=>{
-      this.loadProducts(this.currentPage, this.pageSize);
+    this._product.removeSingleProduct(id).subscribe(async()=>{
+     await this.loadProducts(this.currentPage, this.pageSize);
       this._snackbar.openSnackBar("Product deleted successfully", "X");
       this.isLoader=false;
     },(error)=>{
       if(error.status===404){
-        alert("This product has already deleted.")
+        this._snackbar.openSnackBar("This product has already deleted.", "X");
       }else{
-        alert(error.error.message)
+        this._snackbar.openSnackBar(error.error.message, "X");
         this.isLoader=false;
       }
     })

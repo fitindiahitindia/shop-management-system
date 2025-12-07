@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable,EventEmitter } from '@angular/core';
 import { contact,productResponse, review } from '../data-type';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { login } from '../interface/login.interface';
 import { Country } from '../interface/Country.interface';
@@ -30,36 +30,113 @@ export class ProductService {
   // URL="https://ecommerce-api-weld.vercel.app/api/v1"
      URL="https://shop-management-system-api.vercel.app/api/v1"
   
-  getCustomer(){
-   const adminlogintoken=this.getAdminLoginToken();
-   const headers = {"Authorization":"Bearer "+adminlogintoken}
-   const getCustomer= this._http.get<productResponse>(this.URL+"/customer/customerViews",{headers});
-   return getCustomer
+private customerCache: any = null;
+private customers$ = new BehaviorSubject<any>(null);
+
+  getCustomer() {
+  const adminlogintoken = this.getAdminLoginToken();
+  const headers = { "Authorization": "Bearer " + adminlogintoken };
+
+  // 1️⃣ Check cache first
+  if (this.customerCache) {
+    this.customers$.next(this.customerCache);
+    return of(this.customerCache); 
   }
-  getCustomerByPag(page: number, limit: number){
-    const adminlogintoken=this.getAdminLoginToken();
-  const headers = {"Authorization":"Bearer "+adminlogintoken}
+
+  // 2️⃣ If no cache → API call
+  return this._http.get<productResponse>(this.URL + "/customer/customerViews", { headers })
+    .pipe(
+      tap((res) => {
+        this.customerCache = res;       // cache store
+        this.customers$.next(res);      // BehaviorSubject update
+      })
+    );
+}
+
+private customerPageCachePag = new Map<string, any>(); // page-limit cache
+private customersPag$ = new BehaviorSubject<any>(null);
+
+  getCustomerByPag(page: number, limit: number) {
+  const adminlogintoken = this.getAdminLoginToken();
+  const headers = { "Authorization": "Bearer " + adminlogintoken };
+
   const params = new HttpParams()
     .set('page', page)
     .set('limit', limit);
-  return this._http.get(this.URL+"/customer/customerViewsByPag", { params, headers });
-    
+
+  const cacheKey = `${page}-${limit}`;
+
+  // 1️⃣ Check cache first
+  if (this.customerPageCachePag.has(cacheKey)) {
+    this.customersPag$.next(this.customerPageCachePag.get(cacheKey));
+    return of(this.customerPageCachePag.get(cacheKey)); // API hit नहीं होगी
   }
+
+  // 2️⃣ API call if no cache
+  return this._http.get(this.URL + "/customer/customerViewsByPag", { params, headers })
+    .pipe(
+      tap((res) => {
+        this.customerPageCachePag.set(cacheKey, res); // store in cache
+        this.customersPag$.next(res);                 // BehaviorSubject update
+      })
+    );
+}
+
+
+  private productCache = new Map<string, any>();
+  private products$ = new BehaviorSubject<any>(null);
+
   getProducts(page: number, limit: number) {
   const adminlogintoken=this.getAdminLoginToken();
   const headers = {"Authorization":"Bearer "+adminlogintoken}
   const params = new HttpParams()
     .set('page', page)
     .set('limit', limit);
-  return this._http.get(this.URL+"/product/productViewsPagination", { params, headers });
+
+    const cacheKey = `${page}-${limit}`;
+
+     // 1️⃣ Check if cache exists
+  if (this.productCache.has(cacheKey)) {
+    this.products$.next(this.productCache.get(cacheKey));
+    return of(this.productCache.get(cacheKey));   // <- API hit नहीं होगी
+  }
+
+  // 2️⃣ API call (only first time per page)
+  return this._http.get(this.URL + "/product/productViewsPagination", { params, headers })
+    .pipe(
+      tap((response) => {
+        this.productCache.set(cacheKey, response);  // Store in cache
+        this.products$.next(response);             // Update BehaviorSubject
+      })
+    );
+  // return this._http.get(this.URL+"/product/productViewsPagination", { params, headers });
+}
+private productCache2 = new Map<string, any>();
+private products2$ = new BehaviorSubject<any>(null);
+
+ get_product(): Observable<any> {
+  const adminlogintoken = this.getAdminLoginToken();
+  const headers = { "Authorization": "Bearer " + adminlogintoken };
+
+  const cacheKey = "productViews";
+
+  // 1️⃣ Check cache first
+  if (this.productCache2.has(cacheKey)) {
+    const cached = this.productCache2.get(cacheKey);
+    this.products2$.next(cached);
+    return of(cached); // API hit नहीं होगी
+  }
+
+  // 2️⃣ API call if no cache
+  return this._http.get<productResponse>(this.URL + "/product/productViews", { headers })
+    .pipe(
+      tap((res) => {
+        this.productCache2.set(cacheKey, res);       // store in cache
+        this.products2$.next(res);      // update BehaviorSubject
+      })
+    );
 }
 
-  get_product():Observable<any>{
-   const adminlogintoken=this.getAdminLoginToken();
-   const headers = {"Authorization":"Bearer "+adminlogintoken}
-   const getProduct= this._http.get<productResponse>(this.URL+"/product/productViews",{headers});
-   return getProduct
-  }
   get_SingleProduct(id:any){
     return this._http.get(this.URL+"/product/productView/"+id);
    }
@@ -78,55 +155,48 @@ export class ProductService {
 register_admin(credential:object){
     return this._http.post(this.URL+"/admin/register",credential)
   }
-  createProduct(data:any){
-    const adminlogintoken=this.getAdminLoginToken();
-    const headers = {"Authorization":"Bearer "+adminlogintoken}
-    return this._http.post(this.URL+"/product/productCreate",data,{headers});
-  }
-  removeSingleProduct(id:any){
-    const adminlogintoken=this.getAdminLoginToken();
-    const headers = {"Authorization":"Bearer "+adminlogintoken}
-    return this._http.delete(this.URL+"/product/productDelete/"+id,{headers});
-  }
-  update_SingleProduct(id:any,data:any){
-    return this._http.put(this.URL+"/product/productUpdate/"+id,data);
-  }
-  create_Order(data:object){
-     const adminlogintoken=this.getAdminLoginToken();
-    const headers = {"Authorization":"Bearer "+adminlogintoken}
-    return this._http.post(this.URL+"/order/orderCreate",data,{headers});
-  }
-  remove_Order(id:string){
-    const adminlogintoken=this.getAdminLoginToken();
-    const headers = {"Authorization":"Bearer "+adminlogintoken}
-    return this._http.delete(this.URL+"/order/orderDelete/"+id);
-  }
-  get_profile(){
-    const userlogintoken=this.getUserLoginToken();
-    const headers = {"Authorization":"Bearer "+userlogintoken}
-      return this._http.get(this.URL+"/userAuth/profile",{headers})
-  }
-  get_UserProfile(){
-    const userlogintoken=this.getAdminLoginToken();
-    const headers = {"Authorization":"Bearer "+userlogintoken}
-      return this._http.get(this.URL+"/userAuth/profile",{headers})
-  }
-  get_AllUserProfile(){
-    const userlogintoken=this.getAdminLoginToken();
-    const headers = {"Authorization":"Bearer "+userlogintoken}
-    return this._http.get(this.URL+"/userAuth/Allprofile",{headers});
-  }
-  update_UserStatus(id:string,status:boolean){
-    const data = {"userId":id,"status":status}
-    const userlogintoken=this.getUserLoginToken();
-    const headers = {"Authorization":"Bearer "+userlogintoken}
-    return this._http.put(this.URL+"/userAuth/status/",data,{headers});
-  }
-  get_UserOrder(orderId:string){
-    const adminlogintoken=this.getAdminLoginToken();
-    const headers = {"Authorization":"Bearer "+adminlogintoken}
-    return this._http.get(this.URL+"/order/orderById/"+orderId,{headers})
-  }
+  createProduct(data: any) {
+  const adminlogintoken = this.getAdminLoginToken();
+  const headers = { "Authorization": "Bearer " + adminlogintoken };
+  return this._http.post(this.URL + "/product/productCreate", data, { headers })
+    .pipe(
+      tap(() => {
+        // 🔥 Cache clear
+        this.productCache.clear();
+        this.products$.next(null); // reset subject
+       // dashboard
+        this.dashCache.clear();
+        this.dash$.next(null);
+      })
+    );
+}
+
+ removeSingleProduct(id: any) {
+  const adminlogintoken = this.getAdminLoginToken();
+  const headers = { "Authorization": "Bearer " + adminlogintoken };
+
+  return this._http.delete(this.URL + "/product/productDelete/" + id, { headers })
+    .pipe(
+      tap(() => {
+        // 🔥 Clear cache when product is deleted
+        this.productCache.clear();
+        this.products$.next(null);
+      })
+    );
+}
+
+ update_SingleProduct(id: any, data: any) {
+  return this._http.put(this.URL + "/product/productUpdate/" + id, data)
+    .pipe(
+      tap(() => {
+        // 🔥 Clear cache when product is updated
+        this.productCache.clear();
+        this.products$.next(null);
+      })
+    );
+}
+
+  
   set_OrderStatus(orderId:string,status:object){
     return this._http.post(this.URL+"/orderStatus/"+orderId,status);
   }
@@ -134,44 +204,154 @@ register_admin(credential:object){
     return this._http.get(this.URL+"/orderStatus/"+orderId);
   }
   
-  get_AllUserOrders(page: number, limit: number){
-     const userlogintoken=this.getAdminLoginToken();
-    const headers = {"Authorization":"Bearer "+userlogintoken}
-    const params = new HttpParams()
-    .set('page', page)
-    .set('limit', limit);
-    return this._http.get(this.URL+"/order/orderViews",{params,headers});
-  }
-  get_Country(){
-    return this._http.get<Country>(this.URL+"/country");
-  }
-  get_State(country:string){
-    const countryObj = {
-      country:country.toLowerCase()
-    }
-    return this._http.post(this.URL+"/state",countryObj);
-  }
-  create_Category(categroy:any){
+private orderCache = new Map<string, any>();  // page-limit cache
+private orders$ = new BehaviorSubject<any>(null);
+
+ create_Order(data: object) {
+  const adminlogintoken = this.getAdminLoginToken();
+  const headers = { "Authorization": "Bearer " + adminlogintoken };
+
+  return this._http.post(this.URL + "/order/orderCreate", data, { headers })
+    .pipe(
+      tap(() => {
+        // 🔥 Clear cache after creating new order
+        this.orderCache.clear();
+        this.orders$.next(null);
+
+        //order
+        this.productCache2.clear();
+        this.products2$.next(null);
+
+        //product
+         this.productCache.clear();
+        this.products$.next(null);
+
+        //customer
+        this.customerPageCachePag.clear();
+        this.customersPag$.next(null);
+
+        //dashboard
+        this.dashCache.clear();
+        this.dash$.next(null);
+      })
+    );
+}
+ get_UserOrder(orderId:string){
     const adminlogintoken=this.getAdminLoginToken();
     const headers = {"Authorization":"Bearer "+adminlogintoken}
-    return this._http.post(this.URL+"/category/categoryCreate",categroy,{headers});
+    return this._http.get(this.URL+"/order/orderById/"+orderId,{headers})
   }
-  upload(file:any){
+  remove_Order(id: string) {
+  const adminlogintoken = this.getAdminLoginToken();
+  const headers = { "Authorization": "Bearer " + adminlogintoken };
+
+  return this._http.delete(this.URL + "/order/orderDelete/" + id, { headers })
+    .pipe(
+      tap(() => {
+        // 🔥 Clear cache after deleting order
+        this.orderCache.clear();
+        this.orders$.next(null);
+
+        //product
+        this.productCache.clear();
+        this.products$.next(null);
+      })
+    );
+}
+
+
+ get_AllUserOrders(page: number, limit: number) {
+  const userlogintoken = this.getAdminLoginToken();
+  const headers = { "Authorization": "Bearer " + userlogintoken };
+
+  const params = new HttpParams()
+    .set('page', page)
+    .set('limit', limit);
+
+  const cacheKey = `${page}-${limit}`;
+
+  // 1️⃣ Check cache first
+  if (this.orderCache.has(cacheKey)) {
+    this.orders$.next(this.orderCache.get(cacheKey));
+    return of(this.orderCache.get(cacheKey)); // API hit नहीं होगी
+  }
+
+  // 2️⃣ API call (only first time per page)
+  return this._http.get(this.URL + "/order/orderViews", { params, headers })
+    .pipe(
+      tap((response) => {
+        this.orderCache.set(cacheKey, response); // store cache
+        this.orders$.next(response);             // update BehaviorSubject
+      })
+    );
+}
+
+ 
+  create_Category(category: any) {
+  const adminlogintoken = this.getAdminLoginToken();
+  const headers = { "Authorization": "Bearer " + adminlogintoken };
+
+  return this._http.post(this.URL + "/category/categoryCreate", category, { headers })
+    .pipe(
+      tap(() => {
+        // 🔥 Clear category cache after new category is created
+        this.categoryCache.clear();
+        this.categories$.next(null);
+      })
+    );
+}
+
+ 
+
+  private categoryCache = new Map<string, any>();
+  private categories$ = new BehaviorSubject<any>(null);
+
+  get_Categroy(){
+    const adminlogintoken = this.getAdminLoginToken();
+  const headers = { "Authorization": "Bearer " + adminlogintoken };
+  const url = this.URL + "/category/categoryViews";
+
+  if (this.categoryCache.has(url)) {
+    this.categories$.next(this.categoryCache.get(url));
+    return of(this.categoryCache.get(url));
+  }
+
+  return this._http.get(url, { headers }).pipe(
+    tap(res => {
+      this.categoryCache.set(url, res);
+      this.categories$.next(res);
+    })
+  );
+  }
+  remove_Category(id: any) {
+  return this._http.delete(this.URL + "/category/categoryDelete/" + id)
+    .pipe(
+      tap(() => {
+        // 🔥 Clear category cache after delete
+        this.categoryCache.clear();
+        this.categories$.next(null);
+      })
+    );
+}
+
+ edit_Category(id: any, category: any) {
+  return this._http.put(this.URL + "/category/categoryUpdate/" + id, category)
+    .pipe(
+      tap(() => {
+        // 🔥 Clear category cache after update
+        this.categoryCache.clear();
+        this.categories$.next(null);
+      })
+    );
+}
+
+
+   upload(file:any){
     const adminlogintoken=this.getAdminLoginToken();
     const headers = {"Authorization":"Bearer "+adminlogintoken}
     return this._http.post(this.URL+"/category",file,{headers})
   }
-  get_Categroy(){
-    const adminlogintoken=this.getAdminLoginToken();
-    const headers = {"Authorization":"Bearer "+adminlogintoken}
-    return this._http.get(this.URL+"/category/categoryViews",{headers});
-  }
-  remove_Category(id:any){
-    return this._http.delete(this.URL+"/category/categoryDelete"+"/"+id);
-  }
-  edit_Category(id:any,category:any){
-    return this._http.put(this.URL+"/category/categoryUpdate/"+id,category);
-  }
+
   user_Verify(){
     const userlogintoken=this.getUserLoginToken();
     const headers = {"Authorization":"Bearer "+userlogintoken}
@@ -189,46 +369,31 @@ register_admin(credential:object){
     const headers = {"Authorization":"Bearer "+adminlogintoken}
       return this._http.post(this.URL+"/admin/adminPassword",data,{headers})
   }
-  getAdminDashAnalsis(){
-    const adminlogintoken=this.getAdminLoginToken();
-    const headers = {"Authorization":"Bearer "+adminlogintoken}
-    return this._http.get(this.URL+"/analysic",{headers})
-  }
-  create_blog(data:any){
-    return this._http.post(this.URL+"/blog/create",data)
-  }
-  create_blog_category(categroy:any){
-    const adminlogintoken=this.getAdminLoginToken();
-    const headers = {"Authorization":"Bearer "+adminlogintoken}
-    return this._http.post(this.URL+"/blog/category",categroy,{headers});
-  }
-  get_blog_category(){
-      return this._http.get(this.URL+"/blog/category")
-  }
-  get_blog(){
-    return this._http.get(this.URL+"/blog")
-  }
-  get_blogById(blogId:any){
-    return this._http.get(this.URL+"/blog/byId/"+blogId)
+
+  private dashCache=new Map<string, any>();
+  private dash$ = new BehaviorSubject<any>(null);
+
+ getAdminDashAnalsis() {
+  const adminlogintoken = this.getAdminLoginToken();
+  const headers = { "Authorization": "Bearer " + adminlogintoken };
+  const url = this.URL + "/analysic";
+
+  if (this.dashCache.has(url)) {
+    this.dash$.next(this.dashCache.get(url));
+    return of(this.dashCache.get(url));
   }
 
-  setProductInCheckout(data:any){
-    this.productInCheckout=data
-  }
+  return this._http.get(url, { headers }).pipe(
+    tap(res => {
+      this.dashCache.set(url, res);
+      this.dash$.next(res);
+    })
+  );
+}
+
+
   
-  setLocalDataMyOrder(data:any){
-    this.myOrderData=data;
-  }
-  getLocalDataMyOrder(){
-    return this.myOrderData;
-  }
-  setLocalPaymentOrder(data:any){
-    this.myOrderPayment.emit(data)
-  }
-  setUserLoginToken(token:any){
-   let setToken= localStorage.setItem('userlogintoken',JSON.stringify(token));
-   this.userLoginToken.emit(token);
-  }
+  
   getUserLoginToken(){
     let getToken=JSON.parse(localStorage.getItem('userlogintoken')!);
     return getToken;
@@ -257,9 +422,7 @@ register_admin(credential:object){
     }
     return adminInfo;
     }
-  findUserLoginToken(){
-
-  }
+  
   removeUserLoginToken(tokenName:string){
     localStorage.removeItem(tokenName);
   }
@@ -271,126 +434,12 @@ register_admin(credential:object){
 
   
   
-  // getProductById(id:any){
-  //   let getProductLocal;
-  //   for(let i=0;i<this.category.length;i++){
-  //     if(this.category[i].id==`${id}`){
-  //       getProductLocal=this.category[i];
-  //     }
-      
-  //   }
-  //  return getProductLocal;
-
-  // }
-  setLocalCart(_item:any,sign?:string){
-    let cartData=[];
-    let localCart = localStorage.getItem('cartItem');
-    if(!localCart){
-     localStorage.setItem('cartItem',JSON.stringify([_item]));
-    }else{
-      cartData=JSON.parse(localCart);
-      let existValue = cartData.filter((obj:any)=>obj._id==_item._id && obj.quantity == _item.quantity)
-     if(existValue.length == 0){
-       cartData.push(_item);
-       localStorage.setItem('cartItem',JSON.stringify(cartData));
-     }else{
-      for(let i=0;i<cartData.length;i++){
-        if(cartData[i]._id==_item._id && cartData[i].quantity==_item.quantity){
-          if(sign == "++" && cartData[i].noItems > 1){
-            cartData[i].noItems++;
-          }else if(sign=="--" && cartData[i].noItems > 1){
-            cartData[i].noItems--;
-          }
-          else{
-            cartData[i].noItems++;
-          }
-        }
-      }
-       localStorage.setItem('cartItem',JSON.stringify(cartData));
-     }
-    }
-   }
-   
+  
    clearLocalStorage(){
     localStorage.clear();
    }
 
-  
-  localCart(_item:any){
-    
-    this.setLocalCart(_item);
-    this.getProduct();
-  }
-
-  getLocalCart() {
-    let localCart = JSON.parse(localStorage.getItem('cartItem')!);
-    return localCart;
-  }
-  getTotalPrice() {
-    let totalPrice = 0;
-    for (let i = 0; i < this.getLocalCart().length; i++) {
-      totalPrice +=this.getLocalCart()[i].price * this.getLocalCart()[i].noItems;
-    }
-    return totalPrice;
-  }
-  getProductQuantity(){
-    let totalQuantity = 0;
-    for (let i = 0; i < this.getLocalCart().length; i++) {
-      totalQuantity +=this.getLocalCart()[i].noItems;
-    }
-    return totalQuantity;
-  }
-  getSingleProductQuantity(){
-    let totalQuantity = [];
-    for (let i = 0; i < this.getLocalCart().length; i++) {
-      totalQuantity.push(this.getLocalCart()[i].noItems);
-    }
-    return totalQuantity;
-  }
-  getCartLength() {
-    return this.getLocalCart().length;
-  }
  
-  removeCart(id:string) {
-    if (this.getLocalCart()) {
-      let items:any = this.getLocalCart();
-      items = items.filter((item: any, index:any) => {
-        return id !== item._id;
-      });
-      localStorage.setItem('cartItem', JSON.stringify(items));
-      this.cartData.emit(items);
-    }
-  }
-  
-  updateQuantityCart(id:string,quantity:number){
-    var lcart=[]
-    if(this.getLocalCart()){
-      let items:any = this.getLocalCart();
-      // const finditems = items.filter((item:any)=>{
-      //   return id ==item._id
-      // })
-      // finditems[0].noItems=quantity;
-      // localStorage.setItem('cartItem', JSON.stringify(items));
-      const updatedData = items.map((item:any) => {
-        if (item._id == id) {
-          // Update the quantity for the specific item
-          return { ...item, noItems: quantity };
-        }
-        return item;
-      });
-    }
-  }
-
-  // contact
-  submitContact(value:contact){
-    return this._http.post(this.URL+"/contact",value)
-  }
-
-  // review
-  setReview(data:review){
-   return this._http.post(this.URL+"/review",data)
-  }
-
   reloadUser(){
     if(localStorage.getItem("userlogintoken")){
       this.isUserLoggedIn.next(true);

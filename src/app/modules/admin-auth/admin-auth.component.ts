@@ -48,10 +48,12 @@ export class AdminAuthComponent {
              this.isLogin = false;
         } else {
           this.errorStatus = res.message;
+          this.isLogin = false;
         }
       },
       (error) => {
         this.errorStatus = error.error.message;
+        this.isLogin = false;
       }
     );
   }

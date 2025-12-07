@@ -106,7 +106,7 @@ export class AddManageOrdersComponent {
           }
         },
         (error) => {
-          this.isError = error.error.message;
+          this.isError = error.message;
           this.isCreateOrderLoader = false;
           this.apiLoader=false
         }

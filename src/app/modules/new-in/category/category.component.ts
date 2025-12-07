@@ -37,7 +37,7 @@ export class CategoryComponent {
       this.getCategory()
       setTimeout(() => {
       }, 3000);
-      },(error)=>{
+      },(error:any)=>{
        this.uploadError = error.error
       })
   }
