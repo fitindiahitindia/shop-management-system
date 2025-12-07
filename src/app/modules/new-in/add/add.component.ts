@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { ThemePalette } from '@angular/material/core';
-import { DashboardService } from 'src/app/services/dashboard.service';
 import { ProductService } from 'src/app/services/product.service';
 
 @Component({
@@ -13,16 +12,6 @@ export class AddComponent {
 
   }
 
-//   createCourseObj:any={
-//   "name":"",
-//   "description":"",
-//   "duration":"",
-//   "academicYear":""
-//  }
-
-//  saveCreateCourse(){
-//   this.service.createCourse(this.createCourseObj);
-//  }
 color:ThemePalette="accent"
 isFullPageLoad:boolean=false
 isCreatePro:boolean=false;

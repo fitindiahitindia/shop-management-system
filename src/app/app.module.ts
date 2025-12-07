@@ -17,7 +17,6 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatToolbarModule} from '@angular/material/toolbar'; 
 import { SidebarComponent } from './shared/components/sidebar/sidebar.component';
 import { NewInComponent } from './modules/new-in/new-in.component';
-import { HeaderComponent } from './shared/components/header/header.component';
 import {MatTableModule} from '@angular/material/table';
 import { AddComponent } from './modules/new-in/add/add.component';
 import { ViewComponent } from './modules/new-in/view/view.component';
@@ -27,7 +26,6 @@ import {MatExpansionModule} from '@angular/material/expansion';
 import { AuthComponent } from './modules/auth/auth.component';
 import { ForgotPasswordComponent } from './modules/auth/forgot-password/forgot-password.component';
 import { ProductService } from './services/product.service';
-import { DashboardService } from './services/dashboard.service';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatSliderModule} from '@angular/material/slider'; 
 import {MatChipsModule} from '@angular/material/chips';
@@ -61,7 +59,6 @@ import { ViewAllMangeCustomersComponent } from './modules/manage-customers/view-
     DashboardComponent,
     SidebarComponent,
     NewInComponent,
-    HeaderComponent,
     AddComponent,
     ViewComponent,
     AuthComponent,
@@ -111,7 +108,7 @@ import { ViewAllMangeCustomersComponent } from './modules/manage-customers/view-
     MatAutocompleteModule,
     A11yModule
 ],
-  providers: [ProductService,DashboardService],
+  providers: [ProductService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

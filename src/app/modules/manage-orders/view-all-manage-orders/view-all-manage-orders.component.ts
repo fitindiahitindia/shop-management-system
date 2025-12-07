@@ -11,7 +11,7 @@ import { SnackbarService } from 'src/app/services/snackbar.service';
 export class ViewAllManageOrdersComponent {
   
   allOrders: any[] = [];
-  filteredOrders: any[] = [];   // 👈 search के लिए
+  filteredOrders: any[] = [];  
   isLoader: boolean = true;
   deleteOrder = {
     _id: '',
@@ -76,7 +76,7 @@ export class ViewAllManageOrdersComponent {
         if (error.status === 404) {
           this._snackbar.openSnackBar("This order has already been deleted", "X");
         } else {
-          alert("An unexpected error occurred.");
+          this._snackbar.openSnackBar("An unexpected error occurred.", "X");
         }
       });
     }
