@@ -6,18 +6,24 @@
           Add Product
         </div>
         <div class="card-body py-1">
-          <form action="" class="">
+          <form action="" class="" #productForm="ngForm">
             <div class="row py-2  border bg-light">
               <div class="col-6">
                 <label class="form-label">Product Name *</label>
                 <input type="text" class="form-control form-control-sm bg-white" name="productName"
-                  [ngModelOptions]="{standalone: true}" [(ngModel)]="createPro.productName">
+                  [ngModelOptions]="{standalone: true}" [(ngModel)]="createPro.productName" required>
+                  <div class="text-danger" *ngIf="productForm.submitted && !createPro.productName">
+                  Product name required!
+                </div>
               </div>
               <div class="col-6">
                 <label class="form-label">Product Quantity *</label>
                 <input type="number" min="1" class="form-control form-control-sm bg-white" name="productQuantity"
                   [ngModelOptions]="{standalone: true}" [(ngModel)]="createPro.productQuantity" required>
-              </div>
+                 <div class="text-danger" *ngIf="productForm.submitted && !createPro.productQuantity">
+                  Product quantity required!
+                </div>
+                </div>
               <div class="col-6">
                 <label class="form-label">Product Category *</label>
                 <select name="" id="" class="form-select form-select-sm form-control-sm text-capitalize" #val
@@ -26,28 +32,38 @@
                   <option value="{{cat.categoryName}}" *ngFor="let cat of category;"><span
                       class="text-capitalize">{{cat.categoryName}}</span></option>
                 </select>
+                
               </div>
               <div class="col-6">
                 <label class="form-label">Pruchasing Price (&#8377;) *</label>
                 <input type="number" min="1" class="form-control form-control-sm bg-white" name="productPurchasingPrice"
-                  [ngModelOptions]="{standalone: true}" [(ngModel)]="createPro.productPurchasingPrice">
+                  [ngModelOptions]="{standalone: true}" [(ngModel)]="createPro.productPurchasingPrice" required>
+                   <div class="text-danger" *ngIf="productForm.submitted && !createPro.productPurchasingPrice">
+                  Pruchasing Price required!
+                </div>
               </div>
               <div class="col-6">
                 <label class="form-label">Selling Price (&#8377;) *</label>
                 <input type="number" min="1" class="form-control form-control-sm bg-white" name="productSellingPrice"
-                  [ngModelOptions]="{standalone: true}" [(ngModel)]="createPro.productSellingPrice">
+                  [ngModelOptions]="{standalone: true}" [(ngModel)]="createPro.productSellingPrice" required>
+                   <div class="text-danger" *ngIf="productForm.submitted && !createPro.productSellingPrice">
+                  Selling Price required!
+                </div>
               </div>
               <div class="col-6">
                 <label class="form-label">Pruchasing Date *</label>
                 <input type="date" class="form-control form-control-sm bg-white" name="productPurchasingDate"
-                  [ngModelOptions]="{standalone: true}" [(ngModel)]="createPro.productPurchasingDate">
+                  [ngModelOptions]="{standalone: true}" [(ngModel)]="createPro.productPurchasingDate" required>
+                  <div class="text-danger" *ngIf="productForm.submitted && !createPro.productPurchasingDate">
+                  Pruchasing Date required!
+                </div>
               </div>
               <div class="col-12 text-danger my-1" *ngIf="isError">
                 ❌{{isError}}
               </div>
               <div style="margin-top: 8px;">
                 <button mat-flat-button color="primary" style="margin-right: 5px;"
-                  (click)="createProduct()">Save</button>
+                  (click)="createProduct(productForm)">Save</button>
                 <button mat-flat-button color="accent" type="button" routerLink="../">Close</button>
               </div>
             </div>

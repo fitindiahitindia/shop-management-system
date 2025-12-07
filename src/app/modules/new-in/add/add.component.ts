@@ -32,7 +32,14 @@ createPro={
 getCategoryHtm(val:any){
   this.createPro.productCategory=val.value;
 }
-createProduct():void{
+createProduct(form:any):void{
+  this.isError = '';
+
+    if(form.invalid) {
+      this.isError = 'Please fill all required fields!';
+      return;
+    }
+    
   this.isFullPageLoad=true
   this._product.createProduct(this.createPro).subscribe((res:any)=>{
     if(res.data){
@@ -44,6 +51,7 @@ createProduct():void{
 
   }},(error)=>{
     this.isError=error.error.message
+    this.isFullPageLoad=false
   })
    this.createProEmpty();
 }

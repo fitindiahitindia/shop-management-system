@@ -1,6 +1,27 @@
+  <div class="row mt-2 mb-0">
+    <div class="col-md-4">
+      <div class="position-relative">
+  <input
+    type="text"
+    class="form-control mb-2"
+    placeholder="Search product..."
+    [value]="searchTerm"
+    (input)="onInputChange($event.target)"
+  >
+  <span *ngIf="searchTerm"
+        class="position-absolute top-50 end-0 translate-middle-y me-3"
+        style="cursor: pointer; font-size: 18px;"
+        (click)="clearSearch()">
+    &times;
+  </span>
+</div>
+
+      
+    </div>
+  </div>
 <div class="position-relative f_14 w-100">
 <div class="table-responsive">
-<table class="table mt-2 border table-responsive table-bordered">
+<table class="table border table-responsive table-bordered">
   <thead>
     <tr>
       <th scope="col" class="bg-light">S.No</th>

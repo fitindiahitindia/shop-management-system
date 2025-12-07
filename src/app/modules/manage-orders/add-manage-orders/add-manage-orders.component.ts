@@ -83,6 +83,7 @@ export class AddManageOrdersComponent {
   }
 
   createOrder() {
+
     this.apiLoader=true
     this.isCreateOrderLoader = true;
     if (this.multiProducts.length != 0) {
@@ -114,6 +115,7 @@ export class AddManageOrdersComponent {
     } else {
       this._snackbar.openSnackBar('Add at least one product to create order', 'X');
       this.isCreateOrderLoader = false;
+      this.apiLoader=false
     }
   }
   emptyAllFields() {

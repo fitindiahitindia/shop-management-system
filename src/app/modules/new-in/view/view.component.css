@@ -1,4 +1,16 @@
 .btn.shadow{
   border-radius: 4px;
   box-shadow: 0 2px 0px 1px #c3303e;
+}.clear-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  cursor: pointer;
+  color: #888;
+}
+
+.clear-icon:hover {
+  color: black;
 }

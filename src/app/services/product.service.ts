@@ -78,30 +78,36 @@ export class ProductService {
   private productCache = new Map<string, any>();
   private products$ = new BehaviorSubject<any>(null);
 
-  getProducts(page: number, limit: number) {
-    const adminlogintoken = this.getAdminLoginToken();
-    const headers = { Authorization: 'Bearer ' + adminlogintoken };
-    const params = new HttpParams().set('page', page).set('limit', limit);
+  getProducts(page: number, limit: number, search: string = '') {
+  const adminlogintoken = this.getAdminLoginToken();
+  const headers = { Authorization: 'Bearer ' + adminlogintoken };
 
-    const cacheKey = `${page}-${limit}`;
+  // Include search in params
+  let params = new HttpParams()
+    .set('page', page)
+    .set('limit', limit)
+    .set('search', search);
 
-    // 1️⃣ Check if cache exists
-    if (this.productCache.has(cacheKey)) {
-      this.products$.next(this.productCache.get(cacheKey));
-      return of(this.productCache.get(cacheKey)); // <- API hit नहीं होगी
-    }
+  // Cache key must include search
+  const cacheKey = `${page}-${limit}-${search}`;
 
-    // 2️⃣ API call (only first time per page)
-    return this._http
-      .get(this.URL + '/product/productViewsPagination', { params, headers })
-      .pipe(
-        tap((response) => {
-          this.productCache.set(cacheKey, response); // Store in cache
-          this.products$.next(response); // Update BehaviorSubject
-        })
-      );
-    // return this._http.get(this.URL+"/product/productViewsPagination", { params, headers });
+  // If cache exists, return cached response
+  if (this.productCache.has(cacheKey)) {
+    this.products$.next(this.productCache.get(cacheKey));
+    return of(this.productCache.get(cacheKey)); // No API hit
   }
+
+  // API call
+  return this._http
+    .get(this.URL + '/product/productViewsPagination', { params, headers })
+    .pipe(
+      tap((response) => {
+        this.productCache.set(cacheKey, response); // Store in cache
+        this.products$.next(response);
+      })
+    );
+}
+
   private productCache2 = new Map<string, any>();
   private products2$ = new BehaviorSubject<any>(null);
 

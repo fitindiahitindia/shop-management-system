@@ -1,66 +1,81 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
-import { product2 } from 'src/app/interface/product2.interface';
-import { response } from 'src/app/interface/response.interface';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ProductService } from 'src/app/services/product.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
-export interface PeriodicElement {
-  name: string;
-  position: number;
-  duration: number;
-  action:string;
-}
+
 @Component({
   selector: 'app-view',
   templateUrl: './view.component.html',
   styleUrls: ['./view.component.css']
 })
-export class ViewComponent {
-  constructor(private _product:ProductService,private _snackbar:SnackbarService){}
-  isLoader:boolean=false;
+export class ViewComponent implements OnInit {
   products: any[] = [];
-  totalRecords = 0;    // total items in DB
-  pageSize = 5;       // page size
+  totalRecords = 0;
+  pageSize = 5;
   currentPage = 1;
-  
-  loadProducts(page: number, limit: number) {
-    this.isLoader=true;
-    this._product.getProducts(page, limit).subscribe((res: any) => {
+  isLoader = false;
+  searchTerm: string = "";
+  private searchSubject: Subject<string> = new Subject();
+
+  constructor(private _product: ProductService, private _snackbar: SnackbarService) {}
+
+  ngOnInit() {
+    // Debounced search
+    this.searchSubject.pipe(
+      debounceTime(1000),          // wait 1s after typing stops
+      distinctUntilChanged()      // ignore same consecutive values
+    ).subscribe(searchValue => {
+      this.searchTerm = searchValue;
+      this.currentPage = 1;
+      this.loadProducts(this.currentPage, this.pageSize, this.searchTerm);
+    });
+
+    this.loadProducts(this.currentPage, this.pageSize, this.searchTerm);
+  }
+
+  loadProducts(page: number, limit: number, search: string = '') {
+    this.isLoader = true;
+    this._product.getProducts(page, limit, search).subscribe((res: any) => {
       this.products = res.data;
-      this.totalRecords = res.total;  // backend sends total items
-      this.isLoader=false;
+      this.totalRecords = res.total;
+      this.isLoader = false;
     });
   }
 
   onPageChange(event: PageEvent) {
     this.pageSize = event.pageSize;
-    this.currentPage = event.pageIndex + 1;  // Angular uses 0-based index
-
-    this.loadProducts(this.currentPage, this.pageSize);
+    this.currentPage = event.pageIndex + 1;
+    this.loadProducts(this.currentPage, this.pageSize, this.searchTerm);
   }
 
-  removeProduct(id:string){
-    let removeConfirm=confirm("Are you sure delete product");
-    if(removeConfirm==true){
-    this.isLoader=true;
-    this._product.removeSingleProduct(id).subscribe(async()=>{
-     await this.loadProducts(this.currentPage, this.pageSize);
-      this._snackbar.openSnackBar("Product deleted successfully", "X");
-      this.isLoader=false;
-    },(error)=>{
-      if(error.status===404){
-        this._snackbar.openSnackBar("This product has already deleted.", "X");
-      }else{
-        this._snackbar.openSnackBar(error.error.message, "X");
-        this.isLoader=false;
-      }
-    })
-    }   
+  // Called on input change
+  onInputChange(value:any) {
+    this.searchSubject.next(value.value);
   }
 
- 
-  ngOnInit(){
-    this.loadProducts(this.currentPage, this.pageSize);
+  clearSearch() {
+    this.searchTerm = "";
+    this.currentPage = 1;
+    this.loadProducts(this.currentPage, this.pageSize, "");
   }
- 
+
+  removeProduct(id: string) {
+    if (confirm("Are you sure delete product")) {
+      this.isLoader = true;
+      this._product.removeSingleProduct(id).subscribe(() => {
+        this.loadProducts(this.currentPage, this.pageSize, this.searchTerm);
+        this._snackbar.openSnackBar("Product deleted successfully", "X");
+        this.isLoader = false;
+      }, (error) => {
+        if (error.status === 404) {
+          this._snackbar.openSnackBar("This product has already deleted.", "X");
+        } else {
+          this._snackbar.openSnackBar(error.error.message, "X");
+        }
+        this.isLoader = false;
+      });
+    }
+  }
 }
