@@ -6,7 +6,7 @@
     </div>
     <div class="col-md-6 align-items-end mt-2 mt-mb-0 d-md-flex justify-content-end">
       <div class="">
-        <button class="btn btn-sm btn-outline-primary me-1" (click)="openBillDialog()"><i class="bi bi-printer"></i> Print Preview</button>
+        <button class="btn btn-sm btn-outline-primary me-1" *ngIf="!orderDetailsLoader" (click)="openBillDialog()"><i class="bi bi-printer"></i> Print Preview</button>
       </div>
     </div>
   </div>
@@ -62,7 +62,7 @@
                   <div class="content ">
                     <div class="name  fw-medium text-dark f_14 p-1">Customer</div>
                     <div class="name  f_13 text-primary p-1">
-                      <a routerLink="../../../manage-users" class="text-decoration-none">{{orderDetails.customerName}}</a>
+                      <a routerLink="../../../manage-customers" class="text-decoration-none">{{orderDetails.customerName}}</a>
                     </div>
                   </div>
                 </div>
