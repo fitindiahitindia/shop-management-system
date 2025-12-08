@@ -28,10 +28,9 @@ export class DefaultComponent {
    }else{
     await this._product.removeUserLoginToken("adminlogintoken");
     const isToken =await this._product.getAdminLoginToken();
-    
      if(isToken==null){
        this.Router.navigate(["/"])
-      //  this._product.refresh();
+       this._product.refresh();
      }
    }
    

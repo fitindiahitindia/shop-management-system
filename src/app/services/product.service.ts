@@ -23,9 +23,40 @@ export class ProductService {
 
   URL = 'https://shop-management-system-api.vercel.app/api/v1';
   // URL = 'http://localhost:5000/api/v1';
+  
+  emptyAllCatches(){
 
-  private customerCache: any = null;
-  private customers$ = new BehaviorSubject<any>(null);
+    this.productCache.clear();
+    this.products$.next(null);
+    
+    this.customerCache.clear();
+    this.customers$.next(null);
+
+    this.customerPageCachePag.clear()
+    this.customersPag$.next(null)
+
+    this.productCache2.clear();
+    this.products2$.next(null);
+
+    this.moneyTCache.clear();
+    this.moneyT$.next(null)
+    
+     this.orderCache.clear();
+    this.orders$.next(null);
+
+      this.categoryCache.clear();
+    this.categories$.next(null)
+
+  this.adminProfileCache.clear();
+    this.adminProfile$.next(null)
+
+     this.dashCache.clear();;
+    this.dash$.next(null)
+    
+  }
+
+    private customerCache: any = null;
+    private customers$ = new BehaviorSubject<any>(null);
 
   getCustomer() {
     const adminlogintoken = this.getAdminLoginToken();
@@ -497,7 +528,7 @@ export class ProductService {
   removeUserLoginToken(tokenName: string) {
     localStorage.removeItem(tokenName);
   }
-
+ 
   clearLocalStorage() {
     localStorage.clear();
   }
