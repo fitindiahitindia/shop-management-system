@@ -52,6 +52,10 @@ import { BillComponent } from './shared/widgets/bill/bill.component';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import { ManageCustomersComponent } from './modules/manage-customers/manage-customers.component';
 import { ViewAllMangeCustomersComponent } from './modules/manage-customers/view-all-mange-customers/view-all-mange-customers.component';
+import { MoneyTransferComponent } from './modules/money-transfer/money-transfer.component';
+import { AddMoneyTransferComponent } from './modules/money-transfer/add-money-transfer/add-money-transfer.component';
+import { ViewAllMoneyTransferComponent } from './modules/money-transfer/view-all-money-transfer/view-all-money-transfer.component';
+import { ViewMoneyTransferComponent } from './modules/money-transfer/view-money-transfer/view-money-transfer.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -75,7 +79,11 @@ import { ViewAllMangeCustomersComponent } from './modules/manage-customers/view-
     AddManageOrdersComponent,
     BillComponent,
     ManageCustomersComponent,
-    ViewAllMangeCustomersComponent
+    ViewAllMangeCustomersComponent,
+    MoneyTransferComponent,
+    AddMoneyTransferComponent,
+    ViewAllMoneyTransferComponent,
+    ViewMoneyTransferComponent
   ],
   imports: [
     BrowserModule,

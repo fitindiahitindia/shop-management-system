@@ -1,0 +1,54 @@
+<div class="container-fluid">
+  <div class="row p-0">
+    <div class="col-md-12 p-0  mt-2">
+      <div class="card">
+        <div class="card-header fs-5 fw-medium">
+          Money Transfer View
+        </div>
+        <div class="card-body py-1">
+          <div class="loader-wrapper" *ngIf="isFullPageLoad">
+            <mat-spinner class="small-spinner"></mat-spinner>
+          </div>
+          <form action="" class="" *ngIf="!isFullPageLoad">
+            <div class="row py-2  border bg-light">
+              <div class="col-6">
+                <label class="form-label">Sender name</label>
+                <input type="text" class="form-control form-control-sm bg-white" name="senderName" readonly
+                  [(ngModel)]="viewPro.senderName">
+              </div>
+              <div class="col-6">
+                <label class="form-label">Receiver name</label>
+                <input type="text" class="form-control form-control-sm bg-white" name="receiverName"
+                  [ngModelOptions]="{standalone: true}" readonly [(ngModel)]="viewPro.receiverName">
+              </div>
+              <div class="col-6">
+                <label class="form-label">Amount</label>
+                <input readonly type="number" min="0" class="form-control form-control-sm bg-white" name="amount"
+                  [ngModelOptions]="{standalone: true}" readonly [(ngModel)]="viewPro.amount">
+              </div>
+              <div class="col-6">
+                <label class="form-label">Charges</label>
+                <input readonly type="number" min="0" class="form-control form-control-sm bg-white"
+                  name="charges" [ngModelOptions]="{standalone: true}" readonly
+                  [(ngModel)]="viewPro.charges">
+              </div>
+              <div class="col-6">
+                <label class="form-label">ref Id</label>
+                <input readonly type="text" min="0" class="form-control form-control-sm bg-white"
+                  name="refId" [ngModelOptions]="{standalone: true}" readonly
+                  [(ngModel)]="viewPro.refId">
+              </div>
+              <div style="margin-top: 8px;">
+                <button mat-flat-button color="accent" type="button" routerLink="../../">Close</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <!-- <div style="background-color: greenyellow;padding:7px;font-size: 18px;margin-bottom: 5px;font-weight: bold;">
+        <span>View Product</span></div> -->
+    </div>
+  </div>
+
+
+</div>

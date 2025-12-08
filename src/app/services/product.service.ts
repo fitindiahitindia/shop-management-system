@@ -22,6 +22,7 @@ export class ProductService {
   productInCheckout: OrderCheckout[] = [];
 
   URL = 'https://shop-management-system-api.vercel.app/api/v1';
+  // URL = 'http://localhost:5000/api/v1';
 
   private customerCache: any = null;
   private customers$ = new BehaviorSubject<any>(null);
@@ -194,6 +195,60 @@ export class ProductService {
         this.products$.next(null);
       })
     );
+  }
+
+
+  private moneyTCache = new Map<string, any>(); // page-limit cache
+  private moneyT$ = new BehaviorSubject<any>(null);
+
+   moneyTCreate(data: any) {
+    const adminlogintoken = this.getAdminLoginToken();
+    const headers = { Authorization: 'Bearer ' + adminlogintoken };
+    return this._http
+      .post(this.URL + '/moneyTransfer/moneyTCreate', data, { headers })
+      .pipe(
+        tap(() => {
+          // 🔥 Cache clear
+          this.moneyTCache.clear();
+          this.moneyT$.next(null); // reset subject
+        })
+      );
+  }
+  
+  get_AllmoneyTransfer(page: number, limit: number,search:string) {
+      const adminlogintoken = this.getAdminLoginToken();
+  const headers = { Authorization: 'Bearer ' + adminlogintoken };
+
+  // Include search in params
+  let params = new HttpParams()
+    .set('page', page)
+    .set('limit', limit)
+    .set('search', search);
+
+  // Cache key must include search
+  const cacheKey = `${page}-${limit}-${search}`;
+
+  // If cache exists, return cached response
+  if (this.moneyTCache.has(cacheKey)) {
+    this.moneyT$.next(this.moneyTCache.get(cacheKey));
+    return of(this.moneyTCache.get(cacheKey)); // No API hit
+  }
+
+  // API call
+  return this._http
+    .get(this.URL + '/moneyTransfer/moneyTViewsPagination', { params, headers })
+    .pipe(
+      tap((response) => {
+        this.moneyTCache.set(cacheKey, response); // Store in cache
+        this.moneyT$.next(response);
+      })
+    );
+  }
+
+   get_moneyTransfer(id: any) {
+    const adminlogintoken = this.getAdminLoginToken();
+    const headers = { Authorization: 'Bearer ' + adminlogintoken };
+    return this._http.get(this.URL + '/moneyTransfer/getmtById/' + id,{headers});
   }
 
   set_OrderStatus(orderId: string, status: object) {

@@ -20,6 +20,10 @@ import { AdminGuard } from './services/admin.guard';
 import { AddManageOrdersComponent } from './modules/manage-orders/add-manage-orders/add-manage-orders.component';
 import { ManageCustomersComponent } from './modules/manage-customers/manage-customers.component';
 import { ViewAllMangeCustomersComponent } from './modules/manage-customers/view-all-mange-customers/view-all-mange-customers.component';
+import { MoneyTransferComponent } from './modules/money-transfer/money-transfer.component';
+import { ViewAllMoneyTransferComponent } from './modules/money-transfer/view-all-money-transfer/view-all-money-transfer.component';
+import { ViewMoneyTransferComponent } from './modules/money-transfer/view-money-transfer/view-money-transfer.component';
+import { AddMoneyTransferComponent } from './modules/money-transfer/add-money-transfer/add-money-transfer.component';
 
 const routes: Routes = [
   // **************************admin dashboard**************************
@@ -57,6 +61,18 @@ const routes: Routes = [
           { path: 'add', component: AddManageOrdersComponent },
         ],
       },
+
+       //manage money-transfer
+      {
+        path: 'money-transfer',
+        component: MoneyTransferComponent,
+        children: [
+          { path: '', component: ViewAllMoneyTransferComponent },
+          { path: 'view/:id', component: ViewMoneyTransferComponent },
+          { path: 'add', component: AddMoneyTransferComponent },
+        ],
+      },
+
       //manage Customers
       {
         path: 'manage-customers',

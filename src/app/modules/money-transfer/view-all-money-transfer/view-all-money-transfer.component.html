@@ -1,0 +1,81 @@
+  <div class="row mt-2 mb-0">
+    <div class="col-md-4">
+      <div class="position-relative">
+  <input
+    type="text"
+    class="form-control mb-2"
+    placeholder="Search Sender name.."
+    [value]="searchTerm"
+    (input)="onInputChange($event.target)"
+  >
+  <span *ngIf="searchTerm"
+        class="position-absolute top-50 end-0 translate-middle-y me-3"
+        style="cursor: pointer; font-size: 18px;"
+        (click)="clearSearch()">
+    &times;
+  </span>
+</div>
+
+      
+    </div>
+  </div>
+<div class="position-relative f_14 w-100">
+<div class="table-responsive">
+<table class="table border table-responsive table-bordered">
+  <thead>
+    <tr>
+      <th scope="col" class="bg-light">#</th>
+      <th scope="col" class="bg-light">Ref Id</th>
+      <th scope="col" class="bg-light">Sender Name</th>
+      <th scope="col" class="bg-light">Receiver Name</th>
+      <th scope="col" class="bg-light">Amount (&#8377;)</th>
+      <th scope="col" class="bg-light">Charges (&#8377;)</th>
+      <th scope="col" class="bg-light">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of mtList;let i=index">
+      <th>{{ ((currentPage - 1) * pageSize) + (i + 1) }}</th>
+      <td>{{item.refId}}</td>
+      <td>{{item.senderName}}</td>
+      <td>{{item.receiverName}}</td>
+      <td>{{item.amount}}</td>
+      <td>{{item.charges}}</td>
+      <td>
+        <button class="btn btn-info btn-sm p-1 my-0 py-0" routerLink="view/{{item._id}}">View</button>
+        <!-- <button class="btn btn-success btn-sm p-1 mx-2 my-0 py-0" routerLink="edit/{{item._id}}">Edit</button> -->
+        <!-- <button class="btn btn-danger btn-sm p-1 my-0 py-0" (click)="removeProduct(item._id)">Remove</button>      -->
+      </td>
+    </tr>
+  </tbody>
+</table>
+<mat-paginator [length]="totalRecords"
+              [pageSize]="pageSize"
+              [pageSizeOptions]="[5, 10, 25, 100]"
+              aria-label="Select page"
+              (page)="onPageChange($event)"
+              >
+</mat-paginator>
+
+</div>
+ 
+ <div class="position-absolute top-0 start-0 h-100 w-100 bg-white text-center fs-2 d-flex align-items-center justify-content-center" style="margin-top: 3px;" *ngIf="isLoader">
+      <div class="spinner"></div>
+
+      <style>
+      .spinner {
+         width: 11.2px;
+         height: 11.2px;
+         animation: spinner-z355kx 1s infinite linear;
+         border-radius: 11.2px;
+         box-shadow: 28px 0px 0 0 #0d6efd, 17.4px 21.8px 0 0 #0d6efd, -6.2px 27.2px 0 0 #0d6efd, -25.2px 12px 0 0 #0d6efd, -25.2px -12px 0 0 #0d6efd, -6.2px -27.2px 0 0 #0d6efd, 17.4px -21.8px 0 0 #0d6efd;
+      }
+      
+      @keyframes spinner-z355kx {
+         to {
+            transform: rotate(360deg);
+         }
+      }
+      </style>
+    </div>
+</div>
