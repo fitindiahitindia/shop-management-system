@@ -8,6 +8,18 @@
         <div class="card-body py-1">
           <form action="" class="" #productForm="ngForm">
             <div class="row py-2  border bg-light">
+              <!-- <div class="col-12">
+                <img *ngIf="isImage(previewUrl)" [src]="previewUrl" width="200">
+              </div> 
+              <div class="col-12">
+                <label class="form-label">Product Image *</label>
+                <input type="file" class="form-control form-control-sm bg-white" name="productName"
+                   (change)="uploadProductImage($event)" required>
+                  <div class="text-danger" *ngIf="productForm.submitted && !selectedFile">
+                  Product Image required!
+                </div>
+              </div> -->
+              
               <div class="col-6">
                 <label class="form-label">Product Name *</label>
                 <input type="text" class="form-control form-control-sm bg-white" name="productName"

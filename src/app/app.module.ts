@@ -30,7 +30,7 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatSliderModule} from '@angular/material/slider'; 
 import {MatChipsModule} from '@angular/material/chips';
 import { FilterByTypePipe } from './services/filter-by-type.pipe'; 
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common/http';
 import { EditComponent } from './modules/new-in/edit/edit.component';
 import { ViewSingleComponent } from './modules/new-in/view-single/view-single.component';
 import { GooglePayButtonComponent, GooglePayButtonModule } from '@google-pay/button-angular';
@@ -56,6 +56,7 @@ import { MoneyTransferComponent } from './modules/money-transfer/money-transfer.
 import { AddMoneyTransferComponent } from './modules/money-transfer/add-money-transfer/add-money-transfer.component';
 import { ViewAllMoneyTransferComponent } from './modules/money-transfer/view-all-money-transfer/view-all-money-transfer.component';
 import { ViewMoneyTransferComponent } from './modules/money-transfer/view-money-transfer/view-money-transfer.component';
+import { AuthInterceptor } from './services/interceptors/auth.interceptor';
 @NgModule({
   declarations: [
     AppComponent,
@@ -116,7 +117,13 @@ import { ViewMoneyTransferComponent } from './modules/money-transfer/view-money-
     MatAutocompleteModule,
     A11yModule
 ],
-  providers: [ProductService],
+  providers: [ProductService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

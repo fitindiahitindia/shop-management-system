@@ -10,7 +10,11 @@ import { ProductService } from 'src/app/services/product.service';
   styleUrls: ['./admin-auth.component.css']
 })
 export class AdminAuthComponent {
-  constructor(private _product: ProductService, private _router: Router) {}
+  constructor(private _product: ProductService, private _router: Router) {
+    if(this._product.getAdminLoginToken()){
+      this._router.navigate(['/', 'admin-dashboard']);
+    }
+  }
   color: ThemePalette = 'accent';
   isOpen:boolean = false;
   isLogin: boolean = false;
