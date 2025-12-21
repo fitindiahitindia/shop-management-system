@@ -11,8 +11,14 @@ export class DashboardComponent {
   sideBarOpen:boolean=false;
   totalOrders:number=0;
   totalProducts:number=0;
+  totalCustomers:number=0;
+  totalMt:number=0;
+  totalProOutOfStock:number=0;
   monthNumbersOrders:number[]=[];
   monthNumbersProduct:number[]=[];
+  monthNumbersCustomers:number[]=[];
+  monthNumbersMt:number[]=[];
+  monthNumbersProOutOfStock:number[]=[];
   year:number=new Date().getFullYear();
   months:string[] = [
     "January","February","March","April","May","June",
@@ -57,18 +63,31 @@ export class DashboardComponent {
   });
 }
 
+
   
    ngOnInit(){
      this._product.getAdminDashAnalsis().subscribe((res: any) => {
+      // console.log(Object.keys(res.data).length) // length of object keys
       this.monthNumbersOrders = this.months.map(
         month => res.data?.orderResult?.[this.year]?.[month] ?? 0
       );
       this.monthNumbersProduct = this.months.map(
         month => res.data?.productResult?.[this.year]?.[month] ?? 0
       );
+      this.monthNumbersCustomers = this.months.map(
+        month => res.data?.customerResult?.[this.year]?.[month] ?? 0
+      );
+       this.monthNumbersMt = this.months.map(
+        month => res.data?.customerMt?.[this.year]?.[month] ?? 0
+      );
+      this.monthNumbersProOutOfStock = this.months.map(
+        month => res.data?.outOfStockResult?.[this.year]?.[month] ?? 0
+      );
       this.totalOrders = this.monthNumbersOrders.reduce((acc, curr) => acc + curr, 0);
       this.totalProducts = this.monthNumbersProduct.reduce((acc, curr) => acc + curr, 0);
-
+      this.totalCustomers = this.monthNumbersCustomers.reduce((acc, curr) => acc + curr, 0);
+      this.totalMt = this.monthNumbersMt.reduce((acc, curr) => acc + curr, 0);
+      this.totalProOutOfStock = this.monthNumbersProOutOfStock.reduce((acc, curr) => acc + curr, 0);
       this.createCharts();
     });
    }

@@ -39,7 +39,7 @@
       <th>{{ ((currentPage - 1) * pageSize) + (i + 1) }}</th>
       <td>{{item.pId}}</td>
       <td>{{item.productName}}</td>
-      <td>{{item.productQuantity}}</td>
+      <td class="fw-bold" [ngClass]="item.productQuantity > 1 ? 'text-success' :'text-danger'">{{item.productQuantity}}</td>
       <td>{{item.productSellingPrice}}</td>
       <td>{{item.productCategory}}</td>
       <td>{{item.productPurchasingDate}}</td>

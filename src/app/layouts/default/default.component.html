@@ -17,14 +17,19 @@
   </div>
 
   </mat-toolbar-row>
-  </mat-toolbar>
+</mat-toolbar>
 
 <mat-drawer-container>
   <mat-drawer #drawer mode="side" [opened]="sideBarOpen" role="navigation"  style="background-color: transparent;border: 0;">
     <app-sidebar></app-sidebar>
   </mat-drawer>
-
   <mat-drawer-content color="primary">
+    <div class="marquee-wrapper fw-bold py-1 px-3 f_14">
+  <div class="marquee-text">
+    नमस्ते जी! 🙏  दुकान का हिसाब-किताब अब रखना हुआ आसान। बेचो, रखो और देखो सब एक जगह, बिना झंझट। अब मुफ्त में जोड़ें अपनी दुकान के सभी सामान और बिक्री।
+  </div>
+</div>
+
     <router-outlet></router-outlet>
   </mat-drawer-content>
 
