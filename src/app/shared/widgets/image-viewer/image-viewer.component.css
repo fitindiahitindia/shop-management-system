@@ -1,0 +1,31 @@
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th, .table td {
+  border: 1px solid #333;
+  padding: 6px;
+}
+.table th {
+  background-color: #ccc;
+}
+.mat-mdc-dialog-container .mdc-dialog__content{
+  color: #000!important;
+}
+
+.box img {
+  width: 100%;
+  height: auto;
+}
+.box {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.product-image-wrapper {
+  width: 300px;
+  height: 300px;
+  overflow-y: auto;
+}
+

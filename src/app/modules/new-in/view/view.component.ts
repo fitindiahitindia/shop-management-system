@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ProductService } from 'src/app/services/product.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
+import { ImageViewerComponent } from 'src/app/shared/widgets/image-viewer/image-viewer.component';
 
 @Component({
   selector: 'app-view',
@@ -19,7 +21,7 @@ export class ViewComponent implements OnInit {
   searchTerm: string = "";
   private searchSubject: Subject<string> = new Subject();
 
-  constructor(private _product: ProductService, private _snackbar: SnackbarService) {}
+  constructor(private _product: ProductService, private _snackbar: SnackbarService,private dialog: MatDialog) {}
 
   ngOnInit() {
     // Debounced search
@@ -78,4 +80,14 @@ export class ViewComponent implements OnInit {
       });
     }
   }
+
+  async openBillDialog(val:any) {
+    this.dialog.open(ImageViewerComponent, {
+      data: val.src,
+      height: '400px',
+      width: '600px',
+      autoFocus:false
+    });
+  }
+
 }

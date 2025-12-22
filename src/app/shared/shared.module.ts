@@ -8,6 +8,7 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import { NotfoundComponent } from './components/notfound/notfound.component';
 import { SnackbarComponent } from './widgets/snackbar/snackbar.component';
+import { ImageViewerComponent } from './widgets/image-viewer/image-viewer.component';
 
 @NgModule({
   declarations: [
@@ -15,12 +16,13 @@ import { SnackbarComponent } from './widgets/snackbar/snackbar.component';
     WidgetsComponent,
     NotfoundComponent,
     SnackbarComponent,
+    ImageViewerComponent,
   ],
   imports: [
     MatListModule,
     MatToolbarModule,
     MatIconModule,
-    MatFormFieldModule
+    MatFormFieldModule,
   ],
   exports:[
   ]
