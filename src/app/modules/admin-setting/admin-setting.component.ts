@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { ProductService } from 'src/app/services/product.service';
-import { SnackbarService } from 'src/app/services/snackbar.service';
 interface ADMINPASSWORD{
   oldpassword:string,
   newpassword:string,
@@ -12,7 +11,7 @@ interface ADMINPASSWORD{
   styleUrls: ['./admin-setting.component.css']
 })
 export class AdminSettingComponent {
- constructor(private _product:ProductService,private _snackbar: SnackbarService){}
+ constructor(private _product:ProductService){}
  isLoader:boolean = true;
  ispopupStatus:boolean=false;
  popupMsg="";
@@ -31,31 +30,29 @@ adminProfile = {
   address:"",
   email:"",
 }
-isLoaderSubmit:boolean = false;
-onChangePassword(form:any){
-   if (form.invalid) {
-    return;
-  }
-  this.isLoaderSubmit = true;
-  this.adminPassword.oldpassword = btoa(form.value.oldpassword+`_${Date.now()}`);
-  this.adminPassword.newpassword = btoa(form.value.newpassword+`_${Date.now()}`);
-  this.adminPassword.confirmpassword = btoa(form.value.confirmpassword+`_${Date.now()}`);
+onChangePassword(psw:any){
+  this.adminPassword.oldpassword = btoa(psw.oldpassword+`_${Date.now()}`);
+  this.adminPassword.newpassword = btoa(psw.newpassword+`_${Date.now()}`);
+  this.adminPassword.confirmpassword = btoa(psw.confirmpassword+`_${Date.now()}`);
   this._product.update_AdminPsw(this.adminPassword).subscribe((res:any)=>{
-    form.resetForm();
-    this.isLoaderSubmit = false;
-    this._snackbar.openSnackBar("Password changed successfully", "X");
-  },(err)=>{
-    this.isLoaderSubmit = false;
-    this._snackbar.openSnackBar(err.error.message, "X");
-  })
-}
-
-EmptyAllFields(){
+    this.popupMsg=res.message
+    if(res.status=="failed"){
+      this.isError = true;
+      this.isErrorMsg=res.message
+    }else{
+    this.ispopupStatus=true
+    this.isError=false;
+    setTimeout(() => {
+      this.ispopupStatus =false;
       this.adminPassword.oldpassword="";
       this.adminPassword.newpassword="";
       this.adminPassword.confirmpassword="";
+    }, 3000);}
+  },(err)=>{
+    this.isError = true;
+    this.isErrorMsg=err.err
+  })
 }
-
 getAdminProfile(){
   this._product.get_AdminProfile().subscribe((res:any)=>{
     this.adminProfile.shopId = res.data.shopId

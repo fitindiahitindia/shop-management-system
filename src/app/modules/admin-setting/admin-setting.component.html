@@ -44,7 +44,7 @@
                     Profile Password
                 </div>
                 <div class="card-body py-1">
-                    <form action="" class="" (ngSubmit)="onChangePassword(pswform)" #pswform="ngForm">
+                    <form action="" class="" (ngSubmit)="onChangePassword(pswform.value)" #pswform="ngForm">
                         <div class="row py-2 ">
                             <div class="col-12">
                                 <label class="form-label">Old Password  <sup class="text-danger">*</sup></label>
@@ -68,9 +68,8 @@
                                 ❌{{isErrorMsg}}
                             </div>
                             <div style="margin-top: 12px;">
-                                <button *ngIf="!isLoaderSubmit" mat-flat-button color="primary" style="margin-right: 5px;"
+                                <button mat-flat-button color="primary" style="margin-right: 5px;"
                                    type="submit" [disabled]="!pswform.valid">Password Change</button>
-                                  <mat-spinner *ngIf="isLoaderSubmit" class="small-spinner"></mat-spinner>
                             </div>
                         </div>
                     </form>
