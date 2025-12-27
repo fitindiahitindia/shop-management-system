@@ -25,12 +25,13 @@
   <thead>
     <tr>
       <th scope="col" class="bg-light">S.No</th>
-      <th scope="col" class="bg-light">Product Id</th>
-      <th scope="col" class="bg-light">Product Name</th>
-      <th scope="col" class="bg-light">Quantity</th>
-      <th scope="col" class="bg-light">Selling Price (&#8377;)</th>
-      <th scope="col" class="bg-light">Product Category</th>
-      <th scope="col" class="bg-light">Pruchasing Date</th>
+      <th scope="col" class="bg-light">P.Id</th>
+      <th scope="col" class="bg-light">Img</th>
+      <th scope="col" class="bg-light">P.Name</th>
+      <th scope="col" class="bg-light">Qty</th>
+      <th scope="col" class="bg-light">S.Price (&#8377;)</th>
+      <th scope="col" class="bg-light">P.Category</th>
+      <th scope="col" class="bg-light">P.Date</th>
       <th scope="col" class="bg-light">Action</th>
     </tr>
   </thead>
@@ -38,6 +39,10 @@
     <tr *ngFor="let item of products;let i=index">
       <th>{{ ((currentPage - 1) * pageSize) + (i + 1) }}</th>
       <td>{{item.pId}}</td>
+      <td>
+        <img *ngIf="item.productImage" style="cursor:pointer;" (click)="openBillDialog(val)" #val [src]="item.productImage" alt="" width="70px" height="70px">
+        <img *ngIf="!item.productImage" src="../../../../assets/default.png" alt="" width="70px" height="70px">
+      </td>
       <td>{{item.productName}}</td>
       <td class="fw-bold" [ngClass]="item.productQuantity > 1 ? 'text-success' :'text-danger'">{{item.productQuantity}}</td>
       <td>{{item.productSellingPrice}}</td>
