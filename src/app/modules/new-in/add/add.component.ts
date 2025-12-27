@@ -118,37 +118,5 @@ isImage(url: string | null): boolean {
 
 formData = new FormData();
 
-createProduct2(form:any):void{
-  this.isError = '';
-
-    if(form.invalid) {
-      this.isError = 'Please fill all required fields!';
-      return;
-    }
-  this.formData.append("productName", this.createPro.productName);
-  this.formData.append("productPurchasingPrice", String(this.createPro.productPurchasingPrice));
-  this.formData.append("productSellingPrice", String(this.createPro.productSellingPrice));
-  this.formData.append("productQuantity", String(this.createPro.productQuantity));
-  this.formData.append("productPurchasingDate", this.createPro.productPurchasingDate);
-  this.formData.append("productCategory", this.createPro.productCategory);
-  if (this.selectedFile) {
-    this.formData.append("file", this.selectedFile);
-  }
-  console.log(this.formData)
-  // this.isFullPageLoad=true
-  // this._product.createProduct(this.createPro).subscribe((res:any)=>{
-  //   if(res.data){
-  //   this.isFullPageLoad=false
-  //   this.isCreatePro=true;
-  //   setTimeout(() => {
-  //     this.isCreatePro = false;
-  //   }, 3000);
-
-  // }},(error)=>{
-  //   this.isError=error.error.message
-  //   this.isFullPageLoad=false
-  // })
-  //  this.createProEmpty();
-}
 
 }
