@@ -62,8 +62,16 @@ getAdminProfile(){
     this.adminProfile.address = res.data.address
     this.adminProfile.email = res.data.email
     this.isLoader=false;
-
+    this.print(res.data.shopName)
   })
+}
+
+ leftLogo:string="";
+ rightLogo:string="";
+ print(str:any){
+ let first = str.split(" ");
+ this.leftLogo=first[0].charAt(0);
+ this.rightLogo =first[1].charAt(0);
 }
 
 ngOnInit(){

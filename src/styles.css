@@ -116,3 +116,15 @@ hr.dashboardTitle{
   width: 30px !important;
   height: 30px !important;
 }
+.settingLogo {
+  width: 100px;
+  font-size: 25px;
+  font-weight: bold;
+  text-align: center;
+  height: 49px;
+} 
+.settingLogo div{
+  border:1px solid #777;
+  text-transform: uppercase;
+  align-content: center;
+}

@@ -72,6 +72,7 @@ export class AdminAuthComponent {
     this._product.register_admin(this.registerObj).subscribe(
       (res: any) => {
         alert(res.status)
+        console.log(res)
       },
       (error) => {
         this.errorStatus = error.error.message;
